@@ -38,5 +38,7 @@ export interface GetOfficesResponse {
     name?: string;
     nameDecorated?: string;
     openingDate?: string;
+    parentId?: number;
+    parentName?: string;
 }
 

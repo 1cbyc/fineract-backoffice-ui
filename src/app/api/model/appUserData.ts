@@ -28,6 +28,8 @@ import { ClientData } from './clientData';
 
 export interface AppUserData { 
     clients?: Set<ClientData>;
+    id?: number;
     rowIndex?: number;
+    username?: string;
 }
 

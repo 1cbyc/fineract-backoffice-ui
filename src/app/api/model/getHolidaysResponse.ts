@@ -30,11 +30,16 @@ import { EnumOptionData } from './enumOptionData';
  * GetHolidaysResponse
  */
 export interface GetHolidaysResponse { 
+    description?: string;
     fromDate?: string;
     id?: number;
     name?: string;
     officeId?: number;
     repaymentsRescheduledTo?: string;
+    /**
+     * Rescheduling type id, see GET /holidays/template
+     */
+    reschedulingType?: number;
     status?: EnumOptionData;
     toDate?: string;
 }

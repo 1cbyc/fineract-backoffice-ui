@@ -35,6 +35,7 @@ export interface ProgressiveLoanInterestScheduleModel {
     lastRepaymentPeriod: RepaymentPeriod;
     loanTermInDays?: number;
     maturityDate?: string;
+    principalGraceLifted?: boolean;
     startDate?: string;
     totalCreditedPrincipal?: Money;
     totalDueInterest?: Money;

@@ -36,17 +36,9 @@ export interface PutTellersRequest {
     name?: string;
     officeId?: number;
     startDate?: string;
-    status?: PutTellersRequest.StatusEnum;
+    /**
+     * Teller status code: 100 (pending), 300 (active), 400 (inactive), 600 (closed)
+     */
+    status?: number;
 }
-export namespace PutTellersRequest {
-    export const StatusEnum = {
-        Invalid: 'INVALID',
-        Pending: 'PENDING',
-        Active: 'ACTIVE',
-        Inactive: 'INACTIVE',
-        Closed: 'CLOSED'
-    } as const;
-    export type StatusEnum = typeof StatusEnum[keyof typeof StatusEnum];
-}
-
 

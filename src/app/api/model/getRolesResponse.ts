@@ -30,6 +30,7 @@
  */
 export interface GetRolesResponse { 
     description?: string;
+    disabled?: boolean;
     id?: number;
     name?: string;
 }

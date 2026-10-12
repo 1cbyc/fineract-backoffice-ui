@@ -27,12 +27,14 @@ import { GetSavingsProductsInterestCalculationDaysInYearType } from './getSaving
 import { GetSavingsProductsPaymentChannelToFundSourceMappings } from './getSavingsProductsPaymentChannelToFundSourceMappings';
 import { GetSavingsProductsInterestCalculationType } from './getSavingsProductsInterestCalculationType';
 import { GetSavingsCurrency } from './getSavingsCurrency';
+import { GetSavingsProductsTaxGroup } from './getSavingsProductsTaxGroup';
 import { GetSavingsProductsFeeToIncomeAccountMappings } from './getSavingsProductsFeeToIncomeAccountMappings';
 import { GetSavingsProductsInterestCompoundingPeriodType } from './getSavingsProductsInterestCompoundingPeriodType';
 import { GetSavingsProductsAccountingMappings } from './getSavingsProductsAccountingMappings';
 import { GetSavingsProductsInterestPostingPeriodType } from './getSavingsProductsInterestPostingPeriodType';
 import { GetSavingsProductsPenaltyToIncomeAccountMappings } from './getSavingsProductsPenaltyToIncomeAccountMappings';
 import { GetSavingsProductsAccountingRule } from './getSavingsProductsAccountingRule';
+import { GetSavingsProductsLockinPeriodFrequencyType } from './getSavingsProductsLockinPeriodFrequencyType';
 
 
 /**
@@ -41,20 +43,38 @@ import { GetSavingsProductsAccountingRule } from './getSavingsProductsAccounting
 export interface GetSavingsProductsProductIdResponse { 
     accountingMappings?: GetSavingsProductsAccountingMappings;
     accountingRule?: GetSavingsProductsAccountingRule;
+    allowOverdraft?: boolean;
     charges?: Array<number>;
     currency?: GetSavingsCurrency;
+    daysToDormancy?: number;
+    daysToEscheat?: number;
+    daysToInactive?: number;
     description?: string;
+    enforceMinRequiredBalance?: boolean;
     feeToIncomeAccountMappings?: Set<GetSavingsProductsFeeToIncomeAccountMappings>;
     id?: number;
     interestCalculationDaysInYearType?: GetSavingsProductsInterestCalculationDaysInYearType;
     interestCalculationType?: GetSavingsProductsInterestCalculationType;
     interestCompoundingPeriodType?: GetSavingsProductsInterestCompoundingPeriodType;
     interestPostingPeriodType?: GetSavingsProductsInterestPostingPeriodType;
+    isDormancyTrackingActive?: boolean;
+    lienAllowed?: boolean;
+    lockinPeriodFrequency?: number;
+    lockinPeriodFrequencyType?: GetSavingsProductsLockinPeriodFrequencyType;
+    maxAllowedLienLimit?: number;
+    minBalanceForInterestCalculation?: number;
+    minOverdraftForInterestCalculation?: number;
+    minRequiredBalance?: number;
+    minRequiredOpeningBalance?: number;
     name?: string;
     nominalAnnualInterestRate?: number;
+    nominalAnnualInterestRateOverdraft?: number;
+    overdraftLimit?: number;
     paymentChannelToFundSourceMappings?: Set<GetSavingsProductsPaymentChannelToFundSourceMappings>;
     penaltyToIncomeAccountMappings?: Set<GetSavingsProductsPenaltyToIncomeAccountMappings>;
     shortName?: string;
+    taxGroup?: GetSavingsProductsTaxGroup;
+    withHoldTax?: boolean;
     withdrawalFeeForTransfers?: boolean;
 }
 

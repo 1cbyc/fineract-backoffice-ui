@@ -31,6 +31,8 @@ import { GetCentersStatus } from './getCentersStatus';
  * GetCentersCenterIdResponse
  */
 export interface GetCentersCenterIdResponse { 
+    accountNo?: string;
+    activationDate?: string;
     active?: boolean;
     externalId?: string;
     /**
@@ -43,6 +45,7 @@ export interface GetCentersCenterIdResponse {
     officeId?: number;
     officeName?: string;
     staffId?: number;
+    staffName?: string;
     status?: GetCentersStatus;
 }
 

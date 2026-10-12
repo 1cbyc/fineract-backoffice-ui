@@ -26,6 +26,7 @@
 
 
 export interface StaffUpdateRequest { 
+    dateFormat?: string;
     emailAddress?: string;
     externalId?: string;
     firstname?: string;
@@ -34,6 +35,7 @@ export interface StaffUpdateRequest {
     isLoanOfficer?: boolean;
     joiningDate?: string;
     lastname?: string;
+    locale?: string;
     mobileNo?: string;
     officeId?: number;
 }

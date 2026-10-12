@@ -31,6 +31,7 @@ import { GetRolesRoleIdPermissionsResponsePermissionData } from './getRolesRoleI
  */
 export interface GetRolesRoleIdPermissionsResponse { 
     description?: string;
+    disabled?: boolean;
     id?: number;
     name?: string;
     permissionUsageData?: Array<GetRolesRoleIdPermissionsResponsePermissionData>;
