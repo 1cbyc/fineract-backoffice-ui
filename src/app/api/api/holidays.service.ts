@@ -35,6 +35,8 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { DeleteHolidaysHolidayIdResponse } from '../model/deleteHolidaysHolidayIdResponse';
 // @ts-ignore
+import { EnumOptionData } from '../model/enumOptionData';
+// @ts-ignore
 import { GetHolidaysResponse } from '../model/getHolidaysResponse';
 // @ts-ignore
 import { PostHolidaysHolidayIdResponse } from '../model/postHolidaysHolidayIdResponse';
@@ -302,14 +304,16 @@ export class HolidaysService extends BaseService {
     }
 
     /**
+     * Retrieve Holiday Template
+     * Returns the repayment rescheduling type options accepted as reschedulingType when creating or updating a holiday.
      * @endpoint get /v1/holidays/template
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public getHolidaysTemplate(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<string>;
-    public getHolidaysTemplate(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<string>>;
-    public getHolidaysTemplate(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<string>>;
+    public getHolidaysTemplate(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<EnumOptionData>>;
+    public getHolidaysTemplate(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<EnumOptionData>>>;
+    public getHolidaysTemplate(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<EnumOptionData>>>;
     public getHolidaysTemplate(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -345,7 +349,7 @@ export class HolidaysService extends BaseService {
 
         let localVarPath = `/v1/holidays/template`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<string>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<EnumOptionData>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

@@ -29,6 +29,8 @@
  * PutGroupsGroupIdRequest
  */
 export interface PutGroupsGroupIdRequest { 
+    externalId?: string;
     name?: string;
+    staffId?: number;
 }
 

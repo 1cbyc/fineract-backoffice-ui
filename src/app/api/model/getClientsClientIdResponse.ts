@@ -26,6 +26,7 @@
 import { GetClientsGroups } from './getClientsGroups';
 import { GetClientsTimeline } from './getClientsTimeline';
 import { GetClientsClientIdStatus } from './getClientsClientIdStatus';
+import { GetClientsClientIdNonPersonDetails } from './getClientsClientIdNonPersonDetails';
 
 
 /**
@@ -35,6 +36,7 @@ export interface GetClientsClientIdResponse {
     accountNo?: string;
     activationDate?: string;
     active?: boolean;
+    clientNonPersonDetails?: GetClientsClientIdNonPersonDetails;
     displayName?: string;
     emailAddress?: string;
     externalId?: string;

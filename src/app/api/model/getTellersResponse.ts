@@ -31,6 +31,8 @@
 export interface GetTellersResponse { 
     creditAccountId?: number;
     debitAccountId?: number;
+    description?: string;
+    endDate?: string;
     id?: number;
     name?: string;
     officeId?: number;

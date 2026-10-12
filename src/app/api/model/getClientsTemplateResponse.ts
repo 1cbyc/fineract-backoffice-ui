@@ -25,6 +25,7 @@
 
 import { GetClientsOfficeOptions } from './getClientsOfficeOptions';
 import { GetClientsSavingProductOptions } from './getClientsSavingProductOptions';
+import { CodeValueData } from './codeValueData';
 import { GetClientsStaffOptions } from './getClientsStaffOptions';
 import { GetClientsDataTables } from './getClientsDataTables';
 
@@ -34,7 +35,10 @@ import { GetClientsDataTables } from './getClientsDataTables';
  */
 export interface GetClientsTemplateResponse { 
     activationDate?: string;
+    clientClassificationOptions?: Array<CodeValueData>;
+    clientTypeOptions?: Array<CodeValueData>;
     datatables?: Set<GetClientsDataTables>;
+    genderOptions?: Array<CodeValueData>;
     officeId?: number;
     officeOptions?: Set<GetClientsOfficeOptions>;
     savingProductOptions?: Set<GetClientsSavingProductOptions>;

@@ -41,5 +41,6 @@ export interface PostCentersRequest {
     name?: string;
     officeId?: number;
     staffId?: number;
+    submittedOnDate?: string;
 }
 

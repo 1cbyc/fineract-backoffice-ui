@@ -26,6 +26,8 @@
 
 
 export interface PutGroupsGroupIdChanges { 
+    externalId?: string;
     name?: string;
+    staffId?: number;
 }
 

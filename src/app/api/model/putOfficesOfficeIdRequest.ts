@@ -34,5 +34,6 @@ export interface PutOfficesOfficeIdRequest {
     locale?: string;
     name?: string;
     openingDate?: string;
+    parentId?: number;
 }
 

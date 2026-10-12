@@ -121,6 +121,10 @@ export interface GetWorkingCapitalLoansLoanIdResponse {
      */
     discountFee?: number;
     /**
+     * Currently effective period payment rate for TPV strategy loans: the rate in force on the business date from rate-change history, or paymentRate when none has taken effect yet. Null when the loan uses a non-TPV payment amount calculation strategy
+     */
+    effectivePaymentRate?: number;
+    /**
      * Installment-level delinquency flag (Term-compatible name). True when the loan has a delinquency bucket configured (Working Capital tracks delinquency at the period level); false otherwise
      */
     enableInstallmentLevelDelinquency?: boolean;

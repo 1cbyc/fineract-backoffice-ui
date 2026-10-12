@@ -233,6 +233,7 @@ model/clientFamilyMembersData.ts
 model/clientIdentifier.ts
 model/clientIdentifierData.ts
 model/clientIdentifierRequest.ts
+model/clientNonPersonData.ts
 model/clientSearchData.ts
 model/clientTextSearch.ts
 model/clientTimelineData.ts
@@ -467,6 +468,7 @@ model/getClientsChargesPageItems.ts
 model/getClientsClientIdAccountsResponse.ts
 model/getClientsClientIdChargesResponse.ts
 model/getClientsClientIdIdentifiersResponse.ts
+model/getClientsClientIdNonPersonDetails.ts
 model/getClientsClientIdResponse.ts
 model/getClientsClientIdStatus.ts
 model/getClientsClientIdTransactionsResponse.ts
@@ -878,6 +880,7 @@ model/getSavingsProductsLiabilityAccountOptions.ts
 model/getSavingsProductsLiabilityTagId.ts
 model/getSavingsProductsLiabilityType.ts
 model/getSavingsProductsLiabilityUsage.ts
+model/getSavingsProductsLockinPeriodFrequencyType.ts
 model/getSavingsProductsLockinPeriodFrequencyTypeOptions.ts
 model/getSavingsProductsPaymentChannelToFundSourceMappings.ts
 model/getSavingsProductsPaymentType.ts
@@ -886,6 +889,7 @@ model/getSavingsProductsPenaltyToIncomeAccountMappings.ts
 model/getSavingsProductsPenaltyToIncomeAccountMappingsCharge.ts
 model/getSavingsProductsProductIdResponse.ts
 model/getSavingsProductsResponse.ts
+model/getSavingsProductsTaxGroup.ts
 model/getSavingsProductsTemplateAccountingRule.ts
 model/getSavingsProductsTemplateResponse.ts
 model/getSavingsProductsWithdrawalFeeTypeOptions.ts

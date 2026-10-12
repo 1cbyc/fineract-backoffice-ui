@@ -36,6 +36,7 @@ import { SavingsProductData } from './savingsProductData';
 import { ClientCollateralManagementData } from './clientCollateralManagementData';
 import { AddressData } from './addressData';
 import { OfficeData } from './officeData';
+import { ClientNonPersonData } from './clientNonPersonData';
 
 
 export interface ClientData { 
@@ -49,7 +50,7 @@ export interface ClientData {
     clientCollateralManagements?: Set<ClientCollateralManagementData>;
     clientLegalFormOptions?: Array<EnumOptionData>;
     clientNonPersonConstitutionOptions?: Array<CodeValueData>;
-    clientNonPersonDetails?: object;
+    clientNonPersonDetails?: ClientNonPersonData;
     clientNonPersonMainBusinessLineOptions?: Array<CodeValueData>;
     clientType?: CodeValueData;
     clientTypeId?: number;

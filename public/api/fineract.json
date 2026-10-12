@@ -9472,14 +9472,24 @@
     },
     "/v1/holidays/template": {
       "get": {
-        "operationId": "retrieveRepaymentScheduleUpdationTyeOptions",
+        "description": "Returns the repayment rescheduling type options accepted as reschedulingType when creating or updating a holiday.",
+        "operationId": "retrieveRepaymentScheduleUpdationTypeOptions",
         "responses": {
-          "default": {
-            "content": { "application/json": { "schema": { "type": "string" } } },
-            "description": "default response"
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EnumOptionData" }
+                }
+              }
+            },
+            "description": "OK"
           }
         },
-        "tags": ["Holidays"]
+        "summary": "Retrieve Holiday Template",
+        "tags": ["Holidays"],
+        "x-alternative-operation-id": "retrieveRepaymentScheduleUpdationTyeOptions"
       }
     },
     "/v1/holidays/{holidayId}": {
@@ -30551,7 +30561,9 @@
             "uniqueItems": true,
             "writeOnly": true
           },
-          "rowIndex": { "type": "integer", "format": "int32" }
+          "id": { "type": "integer", "format": "int64" },
+          "rowIndex": { "type": "integer", "format": "int32" },
+          "username": { "type": "string" }
         }
       },
       "AuditData": {
@@ -31532,7 +31544,20 @@
           "status": { "type": "string", "example": "Active" }
         }
       },
-      "ClientNonPersonData": { "type": "object" },
+      "ClientNonPersonData": {
+        "type": "object",
+        "properties": {
+          "constitution": { "$ref": "#/components/schemas/CodeValueData" },
+          "constitutionId": { "type": "integer", "format": "int64" },
+          "dateFormat": { "type": "string" },
+          "incorpNumber": { "type": "string" },
+          "incorpValidityTillDate": { "type": "string", "format": "date" },
+          "locale": { "type": "string" },
+          "mainBusinessLine": { "$ref": "#/components/schemas/CodeValueData" },
+          "mainBusinessLineId": { "type": "integer", "format": "int64" },
+          "remarks": { "type": "string" }
+        }
+      },
       "ClientSearchData": {
         "type": "object",
         "properties": {
@@ -32568,7 +32593,7 @@
           },
           "transactionDate": {
             "type": "string",
-            "description": "Transaction date (command=discountFeeAdjustment); command=discountFee uses the date of the related disbursement",
+            "description": "Transaction date (command=discountFeeAdjustment); for command=discountFee it defaults to the date of the related disbursement and, when sent, must be equal to it",
             "example": "28 June 2024"
           }
         }
@@ -33957,6 +33982,8 @@
         "type": "object",
         "description": "GetCentersCenterIdResponse",
         "properties": {
+          "accountNo": { "type": "string", "example": "000000008" },
+          "activationDate": { "type": "string", "format": "date" },
           "active": { "type": "boolean", "example": false },
           "externalId": { "type": "string", "example": "externalId1" },
           "groupMembers": {
@@ -33970,6 +33997,7 @@
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
           "officeName": { "type": "string", "example": "Head Office" },
           "staffId": { "type": "integer", "format": "int64", "example": 1 },
+          "staffName": { "type": "string", "example": "D, Mary" },
           "status": { "$ref": "#/components/schemas/GetCentersStatus" }
         }
       },
@@ -34020,6 +34048,7 @@
       "GetCentersPageItems": {
         "type": "object",
         "properties": {
+          "accountNo": { "type": "string", "example": "000000002" },
           "active": { "type": "boolean", "example": false },
           "externalId": { "type": "string", "example": "EXT-001" },
           "hierarchy": { "type": "string", "example": ".2." },
@@ -34381,6 +34410,16 @@
           "issuanceDate": { "type": "string", "format": "date" }
         }
       },
+      "GetClientsClientIdNonPersonDetails": {
+        "type": "object",
+        "properties": {
+          "constitution": { "$ref": "#/components/schemas/CodeValueData" },
+          "incorpNumber": { "type": "string", "example": "INC-12345" },
+          "incorpValidityTillDate": { "type": "string", "format": "date" },
+          "mainBusinessLine": { "$ref": "#/components/schemas/CodeValueData" },
+          "remarks": { "type": "string", "example": "Wholesale trader" }
+        }
+      },
       "GetClientsClientIdResponse": {
         "type": "object",
         "description": "GetClientsClientIdResponse",
@@ -34388,6 +34427,9 @@
           "accountNo": { "type": "string", "example": "000000027" },
           "activationDate": { "type": "string", "format": "date" },
           "active": { "type": "boolean", "example": true },
+          "clientNonPersonDetails": {
+            "$ref": "#/components/schemas/GetClientsClientIdNonPersonDetails"
+          },
           "displayName": { "type": "string", "example": "savings test" },
           "emailAddress": { "type": "string", "example": "test@test.com" },
           "externalId": { "type": "string", "example": "123" },
@@ -34672,10 +34714,22 @@
         "description": "GetClientsTemplateResponse",
         "properties": {
           "activationDate": { "type": "string", "format": "date" },
+          "clientClassificationOptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CodeValueData" }
+          },
+          "clientTypeOptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CodeValueData" }
+          },
           "datatables": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/GetClientsDataTables" },
             "uniqueItems": true
+          },
+          "genderOptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CodeValueData" }
           },
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
           "officeOptions": {
@@ -36186,11 +36240,18 @@
         "type": "object",
         "description": "GetHolidaysResponse",
         "properties": {
+          "description": { "type": "string", "example": "Good Friday" },
           "fromDate": { "type": "string", "format": "date" },
           "id": { "type": "integer", "format": "int64", "example": 1 },
           "name": { "type": "string", "example": "Good Friday" },
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
           "repaymentsRescheduledTo": { "type": "string", "format": "date" },
+          "reschedulingType": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Rescheduling type id, see GET /holidays/template",
+            "example": 2
+          },
           "status": { "$ref": "#/components/schemas/EnumOptionData" },
           "toDate": { "type": "string", "format": "date" }
         }
@@ -38727,7 +38788,9 @@
           "locale": { "type": "string", "example": "en" },
           "name": { "type": "string", "example": "Head Office" },
           "nameDecorated": { "type": "string", "example": "Head Office" },
-          "openingDate": { "type": "string", "format": "date" }
+          "openingDate": { "type": "string", "format": "date" },
+          "parentId": { "type": "integer", "format": "int64", "example": 1 },
+          "parentName": { "type": "string", "example": "Head Office" }
         }
       },
       "GetOfficesTemplateResponse": {
@@ -40070,6 +40133,7 @@
             "type": "string",
             "example": "This role provides all application permissions."
           },
+          "disabled": { "type": "boolean", "example": false },
           "id": { "type": "integer", "format": "int64", "example": 1 },
           "name": { "type": "string", "example": "Super Users" }
         }
@@ -40082,6 +40146,7 @@
             "type": "string",
             "example": "This role provides all application permissions."
           },
+          "disabled": { "type": "boolean", "example": false },
           "id": { "type": "integer", "format": "int64", "example": 1 },
           "name": { "type": "string", "example": "Super Users" },
           "permissionUsageData": {
@@ -40110,6 +40175,7 @@
             "type": "string",
             "example": "This role provides all application permissions."
           },
+          "disabled": { "type": "boolean", "example": false },
           "id": { "type": "integer", "format": "int64", "example": 1 },
           "name": { "type": "string", "example": "Super Users" }
         }
@@ -40656,6 +40722,14 @@
           "id": { "type": "integer", "format": "int32", "example": 1 }
         }
       },
+      "GetSavingsProductsLockinPeriodFrequencyType": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "example": "savings.lockin.savingsPeriodFrequencyType.days" },
+          "id": { "type": "integer", "format": "int32", "example": 0 },
+          "value": { "type": "string", "example": "Days" }
+        }
+      },
       "GetSavingsProductsLockinPeriodFrequencyTypeOptions": {
         "type": "object",
         "properties": {
@@ -40716,13 +40790,18 @@
             "$ref": "#/components/schemas/GetSavingsProductsAccountingMappings"
           },
           "accountingRule": { "$ref": "#/components/schemas/GetSavingsProductsAccountingRule" },
+          "allowOverdraft": { "type": "boolean", "example": false },
           "charges": {
             "type": "array",
             "example": [],
             "items": { "type": "integer", "format": "int64" }
           },
           "currency": { "$ref": "#/components/schemas/GetSavingsCurrency" },
+          "daysToDormancy": { "type": "integer", "format": "int64", "example": 60 },
+          "daysToEscheat": { "type": "integer", "format": "int64", "example": 90 },
+          "daysToInactive": { "type": "integer", "format": "int64", "example": 30 },
           "description": { "type": "string", "example": "gtasga" },
+          "enforceMinRequiredBalance": { "type": "boolean", "example": false },
           "feeToIncomeAccountMappings": {
             "type": "array",
             "items": {
@@ -40743,8 +40822,21 @@
           "interestPostingPeriodType": {
             "$ref": "#/components/schemas/GetSavingsProductsInterestPostingPeriodType"
           },
+          "isDormancyTrackingActive": { "type": "boolean", "example": false },
+          "lienAllowed": { "type": "boolean", "example": false },
+          "lockinPeriodFrequency": { "type": "integer", "format": "int32", "example": 0 },
+          "lockinPeriodFrequencyType": {
+            "$ref": "#/components/schemas/GetSavingsProductsLockinPeriodFrequencyType"
+          },
+          "maxAllowedLienLimit": { "type": "number", "example": 2000.0 },
+          "minBalanceForInterestCalculation": { "type": "number", "example": 100.0 },
+          "minOverdraftForInterestCalculation": { "type": "number", "example": 0 },
+          "minRequiredBalance": { "type": "number", "example": 100.0 },
+          "minRequiredOpeningBalance": { "type": "number", "example": 10000.0 },
           "name": { "type": "string", "example": "savings product" },
           "nominalAnnualInterestRate": { "type": "number", "example": 5 },
+          "nominalAnnualInterestRateOverdraft": { "type": "number", "example": 21.0 },
+          "overdraftLimit": { "type": "number", "example": 10000 },
           "paymentChannelToFundSourceMappings": {
             "type": "array",
             "items": {
@@ -40760,6 +40852,8 @@
             "uniqueItems": true
           },
           "shortName": { "type": "string", "example": "sa1" },
+          "taxGroup": { "$ref": "#/components/schemas/GetSavingsProductsTaxGroup" },
+          "withHoldTax": { "type": "boolean", "example": false },
           "withdrawalFeeForTransfers": { "type": "boolean", "example": false }
         }
       },
@@ -40787,6 +40881,13 @@
           "nominalAnnualInterestRate": { "type": "number", "example": 5.0 },
           "shortName": { "type": "string", "example": "sa1" },
           "withdrawalFeeForTransfers": { "type": "boolean", "example": false }
+        }
+      },
+      "GetSavingsProductsTaxGroup": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "example": 1 },
+          "name": { "type": "string", "example": "tax" }
         }
       },
       "GetSavingsProductsTemplateAccountingRule": {
@@ -41304,11 +41405,13 @@
         "properties": {
           "creditAccountId": { "type": "integer", "format": "int64", "example": 0 },
           "debitAccountId": { "type": "integer", "format": "int64", "example": 0 },
+          "description": { "type": "string", "example": "cash handling" },
+          "endDate": { "type": "string", "format": "date", "example": "2015-02-28" },
           "id": { "type": "integer", "format": "int64", "example": 3 },
           "name": { "type": "string", "example": "Teller3" },
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
           "officeName": { "type": "string", "example": "Head Office" },
-          "startDate": { "type": "string", "format": "date" },
+          "startDate": { "type": "string", "format": "date", "example": "2015-02-01" },
           "status": {
             "type": "string",
             "enum": ["INVALID", "PENDING", "ACTIVE", "INACTIVE", "CLOSED"],
@@ -42195,6 +42298,11 @@
             "type": "number",
             "description": "Discount fee set during loan disbursement",
             "example": 0.0
+          },
+          "effectivePaymentRate": {
+            "type": "number",
+            "description": "Currently effective period payment rate for TPV strategy loans: the rate in force on the business date from rate-change history, or paymentRate when none has taken effect yet. Null when the loan uses a non-TPV payment amount calculation strategy",
+            "example": 12.5
           },
           "enableInstallmentLevelDelinquency": {
             "type": "boolean",
@@ -46098,7 +46206,8 @@
           "locale": { "type": "string", "example": "en" },
           "name": { "type": "string", "example": "First Center (No groups)" },
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
-          "staffId": { "type": "integer", "format": "int64", "example": 1 }
+          "staffId": { "type": "integer", "format": "int64", "example": 1 },
+          "submittedOnDate": { "type": "string", "example": "04 March 2011" }
         }
       },
       "PostCentersResponse": {
@@ -48969,14 +49078,16 @@
         "properties": {
           "dateFormat": { "type": "string", "example": "dd-MM-yyyy" },
           "description": { "type": "string", "example": "cash handling" },
+          "endDate": { "type": "string", "format": "date" },
           "locale": { "type": "string", "example": "en" },
           "name": { "type": "string", "example": "Teller3" },
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
           "startDate": { "type": "string", "format": "date" },
           "status": {
-            "type": "string",
-            "enum": ["INVALID", "PENDING", "ACTIVE", "INACTIVE", "CLOSED"],
-            "example": "ACTIVE"
+            "type": "integer",
+            "format": "int32",
+            "description": "Teller status code: 100 (pending), 300 (active), 400 (inactive), 600 (closed)",
+            "example": 300
           }
         }
       },
@@ -49340,7 +49451,7 @@
           "relatedResourceId": {
             "type": "integer",
             "format": "int64",
-            "description": "Disbursement transaction id for discountFee; discount fee transaction id for discountFeeAdjustment. Cannot be combined with relatedExternalResourceId. Not accepted on transactions/{transactionId} and transactions/external-id/{transactionExternalId}, where the path names the related transaction",
+            "description": "Disbursement transaction id for discountFee, optional when transactionDate is sent (the active disbursement on that date is used); discount fee transaction id for discountFeeAdjustment. Cannot be combined with relatedExternalResourceId. Not accepted on transactions/{transactionId} and transactions/external-id/{transactionExternalId}, where the path names the related transaction",
             "example": 42
           },
           "reversalExternalId": {
@@ -49355,7 +49466,7 @@
           },
           "transactionDate": {
             "type": "string",
-            "description": "Transaction date",
+            "description": "Transaction date. For command=discountFee it is optional, defaults to the date of the related disbursement and, when sent, must be equal to it",
             "example": "28 June 2024"
           },
           "writeoffReasonId": {
@@ -49897,6 +50008,7 @@
           "lastRepaymentPeriod": { "$ref": "#/components/schemas/RepaymentPeriod" },
           "loanTermInDays": { "type": "integer", "format": "int32" },
           "maturityDate": { "type": "string", "format": "date" },
+          "principalGraceLifted": { "type": "boolean" },
           "startDate": { "type": "string", "format": "date" },
           "totalCreditedPrincipal": { "$ref": "#/components/schemas/Money" },
           "totalDueInterest": { "$ref": "#/components/schemas/Money" },
@@ -50583,12 +50695,20 @@
       },
       "PutGroupsGroupIdChanges": {
         "type": "object",
-        "properties": { "name": { "type": "string", "example": "First Group (changed)" } }
+        "properties": {
+          "externalId": { "type": "string", "example": "externalId1" },
+          "name": { "type": "string", "example": "First Group (changed)" },
+          "staffId": { "type": "integer", "format": "int64", "example": 1 }
+        }
       },
       "PutGroupsGroupIdRequest": {
         "type": "object",
         "description": "PutGroupsGroupIdRequest",
-        "properties": { "name": { "type": "string", "example": "First Group (changed)" } }
+        "properties": {
+          "externalId": { "type": "string", "example": "externalId1" },
+          "name": { "type": "string", "example": "First Group (changed)" },
+          "staffId": { "type": "integer", "format": "int64", "example": 1 }
+        }
       },
       "PutGroupsGroupIdResponse": {
         "type": "object",
@@ -51193,7 +51313,8 @@
           "externalId": { "type": "string", "example": "SYS54-88" },
           "locale": { "type": "string", "example": "en" },
           "name": { "type": "string", "example": "Name is updated" },
-          "openingDate": { "type": "string", "example": "01 July 2007" }
+          "openingDate": { "type": "string", "example": "01 July 2007" },
+          "parentId": { "type": "integer", "format": "int64", "example": 2 }
         }
       },
       "PutOfficesOfficeIdResponse": {
@@ -51719,9 +51840,10 @@
           "officeId": { "type": "integer", "format": "int64", "example": 1 },
           "startDate": { "type": "string", "format": "date" },
           "status": {
-            "type": "string",
-            "enum": ["INVALID", "PENDING", "ACTIVE", "INACTIVE", "CLOSED"],
-            "example": "ACTIVE"
+            "type": "integer",
+            "format": "int32",
+            "description": "Teller status code: 100 (pending), 300 (active), 400 (inactive), 600 (closed)",
+            "example": 300
           }
         }
       },
@@ -52236,6 +52358,7 @@
           "paidInterest": { "$ref": "#/components/schemas/Money" },
           "paidPrincipal": { "$ref": "#/components/schemas/Money" },
           "previous": { "$ref": "#/components/schemas/RepaymentPeriod" },
+          "principalPaymentGrace": { "type": "boolean" },
           "rateFactorPlus1": { "type": "number" },
           "reAged": { "type": "boolean" },
           "reAgedEarlyRepaymentHolder": { "type": "boolean" },
@@ -53269,6 +53392,7 @@
       "StaffUpdateRequest": {
         "type": "object",
         "properties": {
+          "dateFormat": { "type": "string" },
           "emailAddress": { "type": "string" },
           "externalId": { "type": "string" },
           "firstname": { "type": "string" },
@@ -53277,6 +53401,7 @@
           "isLoanOfficer": { "type": "boolean" },
           "joiningDate": { "type": "string" },
           "lastname": { "type": "string" },
+          "locale": { "type": "string" },
           "mobileNo": { "type": "string" },
           "officeId": { "type": "integer", "format": "int64" }
         }

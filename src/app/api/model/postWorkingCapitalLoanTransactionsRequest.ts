@@ -48,7 +48,7 @@ export interface PostWorkingCapitalLoanTransactionsRequest {
      */
     relatedExternalResourceId?: string;
     /**
-     * Disbursement transaction id for discountFee; discount fee transaction id for discountFeeAdjustment. Cannot be combined with relatedExternalResourceId. Not accepted on transactions/{transactionId} and transactions/external-id/{transactionExternalId}, where the path names the related transaction
+     * Disbursement transaction id for discountFee, optional when transactionDate is sent (the active disbursement on that date is used); discount fee transaction id for discountFeeAdjustment. Cannot be combined with relatedExternalResourceId. Not accepted on transactions/{transactionId} and transactions/external-id/{transactionExternalId}, where the path names the related transaction
      */
     relatedResourceId?: number;
     /**
@@ -60,7 +60,7 @@ export interface PostWorkingCapitalLoanTransactionsRequest {
      */
     transactionAmount?: number;
     /**
-     * Transaction date
+     * Transaction date. For command=discountFee it is optional, defaults to the date of the related disbursement and, when sent, must be equal to it
      */
     transactionDate?: string;
     /**

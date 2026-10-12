@@ -66,6 +66,7 @@ export interface RepaymentPeriod {
     paidInterest?: Money;
     paidPrincipal?: Money;
     previous?: RepaymentPeriod;
+    principalPaymentGrace?: boolean;
     rateFactorPlus1?: number;
     reAged?: boolean;
     reAgedEarlyRepaymentHolder?: boolean;

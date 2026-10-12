@@ -51,7 +51,7 @@ export interface ExecuteWorkingCapitalLoanTransactionCommandRequest {
      */
     transactionAmount?: number;
     /**
-     * Transaction date (command=discountFeeAdjustment); command=discountFee uses the date of the related disbursement
+     * Transaction date (command=discountFeeAdjustment); for command=discountFee it defaults to the date of the related disbursement and, when sent, must be equal to it
      */
     transactionDate?: string;
 }
