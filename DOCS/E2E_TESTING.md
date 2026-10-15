@@ -32,16 +32,21 @@ For how the E2E jobs fit alongside the rest of CI, see [`CI_CHECKS.md`](CI_CHECK
   self-signed certificate — see [Prerequisites](#prerequisites)).
 - **Web server**: Playwright auto-starts `npm run start` (`ng serve`) and reuses an already-running
   instance (`reuseExistingServer: true`).
-- **Suite**: 204 tests across 15 spec files, split into two projects:
-  - **`mocked`** (188 tests, 9 files) stubs every request with `page.route(...)`. Needs no
-    Fineract — verified to pass with the backend stopped entirely.
-  - **`backend`** (16 tests, 6 files) drives a real Fineract end to end. A `setup` project seeds
+- **Projects**: select the project that matches the environment you have prepared:
+  - **`mocked`** stubs backend requests with `page.route(...)` and needs no Fineract.
+  - **`mobile`** runs narrow-viewport journeys with Pixel 7 emulation and mocked requests.
+  - **`backend`** drives a local Fineract end to end. Its `setup` dependency seeds
     the reference data it needs — enabled currencies, a datatable on `m_loan`, a collateral type —
     so nothing is gated behind manual preparation.
-- **Browsers**: chromium for both projects; `firefox` and `webkit` projects exist for local
-  cross-browser runs and are not part of CI.
-- **CI**: `.github/workflows/e2e.yml` runs the two projects as **parallel jobs**, so the mocked half
-  never waits on a Fineract boot. Each uploads its own report and videos and comments on the PR.
+  - **`two-factor`** needs its own backend stack; see `npm run e2e:stack:2fa` and
+    `npm run test:e2e:2fa`.
+  - **`demo-seed`** creates demo data rather than asserting behavior; invoke it explicitly with
+    `npm run seed:demo-data` when wanted.
+- **Browsers**: `mocked` and `backend` use Chromium, but there is no project named `chromium`.
+  The `firefox` and `webkit` projects include backend specs and depend on `setup`, so they also
+  require a running local Fineract.
+- **CI**: the mocked, backend and two-factor jobs run separately. Shards and report publication
+  are described in [`CI_CHECKS.md`](CI_CHECKS.md#e2eyml--e2e-tests).
 - **Artifacts**: written to `PLAYWRIGHT_OUTPUT_DIR` (system temp by default), deliberately outside
   the repository — the dev server watches the working tree, and Playwright's artifact churn used to
   race the file watcher and kill the server mid-run.
@@ -70,13 +75,25 @@ The `ssl/` directory is git-ignored; the certs are local-only. Without them `ng 
 ## Running the tests
 
 ```bash
-npm run test:e2e                 # all projects, headless
-npx playwright test --ui         # interactive UI mode (recommended while authoring)
-npx playwright test --headed     # watch a real browser
-npx playwright test --project=chromium e2e/client.spec.ts   # one file, one browser
-npx playwright test --debug      # step through with the inspector
-npx playwright show-report       # open the HTML report after a run
+npm run test:e2e -- --project=mocked                       # no Fineract needed
+npx playwright test --project=mocked --ui                 # interactive UI mode
+npx playwright test --project=mocked --headed             # watch the browser
+npx playwright test --project=mocked e2e/client.spec.ts    # one mocked spec
+npx playwright test --project=mocked --debug              # step through with the inspector
+npx playwright test --project=mobile                      # mocked mobile journeys
+npx playwright show-report                               # open the HTML report after a run
 ```
+
+Use `--list` to check which tests a command selects without starting the web server or backend:
+
+```bash
+npx playwright test --project=mocked e2e/client.spec.ts --list
+```
+
+Keep the project explicit with `npm run test:e2e` or `npx playwright test`. An unfiltered run
+selects every configured project, including backend, two-factor and demo seeding, which have
+different prerequisites. To run the mocked and backend suites together against the normal local
+stack, use `npm run test:e2e:local` after [starting it](#running-the-real-backend-half-locally).
 
 If you already have `npm start` running, Playwright reuses it; otherwise it boots one (allow ~60s for
 the first cold `ng serve` compile).
@@ -162,17 +179,18 @@ banking workflow end to end.
 
 ## Continuous integration
 
-`.github/workflows/e2e.yml` runs the suite on every pull request to `main`/`develop`, as two jobs in
-parallel:
+`.github/workflows/e2e.yml` runs on pull requests to `main`/`develop`. Its projects use separate
+environments:
 
-| Job       | Project   | Tests | Fineract     |
-| --------- | --------- | ----- | ------------ |
-| `mocked`  | `mocked`  | 188   | not needed   |
-| `backend` | `backend` | 16    | docker stack |
+| Project      | Fineract                  |
+| ------------ | ------------------------- |
+| `mocked`     | not needed                |
+| `backend`    | local Docker stack        |
+| `two-factor` | separate two-factor stack |
 
-Splitting them means a broken mock reports in a couple of minutes instead of waiting behind a
-90-second Fineract boot it never touches, and one slow real-backend flow no longer sets the
-wall-clock for everything else.
+See [`CI_CHECKS.md`](CI_CHECKS.md#e2eyml--e2e-tests) for the shard layout, report jobs and artifact
+handling. Use `--list` locally to inspect current test discovery instead of relying on a test
+count copied into this guide.
 
 `playwright.config.ts` already gates CI behaviour — `forbidOnly`, `retries: 2` and `workers: 1` apply
 only when `process.env.CI` is set.
