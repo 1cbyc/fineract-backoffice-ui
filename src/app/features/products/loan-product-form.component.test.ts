@@ -113,7 +113,16 @@ const TEMPLATE = {
     },
   ],
   repaymentStartDateTypeOptions: [
-    { id: 1, code: 'repaymentStartDateType.disbursement', description: 'Disbursement date' },
+    {
+      id: 1,
+      code: 'repaymentStartDateType.disbursementDate',
+      value: 'Disbursement Date',
+    },
+    {
+      id: 2,
+      code: 'repaymentStartDateType.submittedOnDate',
+      value: 'Submitted On Date',
+    },
   ],
   chargeOffBehaviourOptions: [
     { code: 'REGULAR', value: 'Regular' },
@@ -492,7 +501,18 @@ describe('LoanProductFormComponent', () => {
       expect(component.capitalizedIncomeTypeOptions()).toHaveLength(2);
       expect(component.capitalizedIncomeStrategyOptions()[0].value).toBe(EQUAL_AMORTIZATION_LABEL);
       expect(component.chargeOffBehaviourOptions()).toHaveLength(2);
-      expect(component.repaymentStartDateTypeOptions()).toHaveLength(1);
+      expect(component.repaymentStartDateTypeOptions()).toHaveLength(2);
+    });
+
+    it('renders repayment start date labels from the template response', () => {
+      const select = fixture.nativeElement.querySelector(
+        '[data-testid="loan-product-repayment-start-date-type"]',
+      );
+      const labels = Array.from<HTMLElement>(select.querySelectorAll('ion-select-option')).map(
+        (option) => option.textContent.trim(),
+      );
+
+      expect(labels).toEqual(['Disbursement Date', 'Submitted On Date']);
     });
   });
 

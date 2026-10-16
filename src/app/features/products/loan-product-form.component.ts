@@ -87,6 +87,11 @@ import { TooltipDirective } from '../../shared/directives/tooltip.directive';
  */
 const DAILY_INTEREST_CALCULATION_PERIOD = 0;
 
+/** The live template response uses `value`; the generated contract currently omits it. */
+type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
+  value?: string;
+};
+
 @Component({
   selector: 'app-loan-product-form',
   standalone: true,
@@ -1216,7 +1221,7 @@ const DAILY_INTEREST_CALCULATION_PERIOD = 0;
                     >
                       @for (option of repaymentStartDateTypeOptions(); track option.id) {
                         <ion-select-option [value]="option.id">{{
-                          option.description
+                          option.value ?? option.description
                         }}</ion-select-option>
                       }
                     </ion-select>
@@ -1431,7 +1436,7 @@ export class LoanProductFormComponent implements OnInit {
   readonly preClosureStrategyOptions = signal<
     GetLoanProductsPreClosureInterestCalculationStrategy[]
   >([]);
-  readonly repaymentStartDateTypeOptions = signal<GetLoanProductsRepaymentStartDateType[]>([]);
+  readonly repaymentStartDateTypeOptions = signal<RepaymentStartDateTypeOption[]>([]);
   readonly chargeOffBehaviourOptions = signal<StringEnumOptionData[]>([]);
 
   /**
