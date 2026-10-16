@@ -87,29 +87,29 @@ const TEMPLATE = {
   buyDownFeeCalculationTypeOptions: [{ code: 'FLAT', value: 'Flat' }],
   buyDownFeeStrategyOptions: [{ code: 'EQUAL_AMORTIZATION', value: EQUAL_AMORTIZATION_LABEL }],
   interestRecalculationCompoundingTypeOptions: [
-    { id: 0, code: 'interestRecalculationCompoundingMethod.none', description: 'None' },
-    { id: 1, code: 'interestRecalculationCompoundingMethod.fee', description: 'Fee' },
+    { id: 0, code: 'interestRecalculationCompoundingMethod.none', value: 'None' },
+    { id: 1, code: 'interestRecalculationCompoundingMethod.fee', value: 'Fee' },
   ],
   interestRecalculationFrequencyTypeOptions: [
     {
       id: 1,
       code: 'interestRecalculationFrequencyType.same.as.repayment.period',
-      description: 'Same as repayment period',
+      value: 'Same as repayment period',
     },
-    { id: 2, code: 'interestRecalculationFrequencyType.daily', description: 'Daily' },
+    { id: 2, code: 'interestRecalculationFrequencyType.daily', value: 'Daily' },
   ],
   rescheduleStrategyTypeOptions: [
     {
       id: 1,
       code: 'loanRescheduleStrategyMethod.reduce.emi.amount',
-      description: 'Reduce EMI amount',
+      value: 'Reduce EMI amount',
     },
   ],
   preClosureInterestCalculationStrategyOptions: [
     {
       id: 1,
-      code: 'preClosureInterestCalculationStrategy.tillPreClosureDate',
-      description: 'Till pre-close date',
+      code: 'loanPreClosureInterestCalculationStrategy.tillPreClosureDate',
+      value: 'Till pre-close date',
     },
   ],
   repaymentStartDateTypeOptions: [
@@ -504,15 +504,30 @@ describe('LoanProductFormComponent', () => {
       expect(component.repaymentStartDateTypeOptions()).toHaveLength(2);
     });
 
-    it('renders repayment start date labels from the template response', () => {
-      const select = fixture.nativeElement.querySelector(
-        '[data-testid="loan-product-repayment-start-date-type"]',
-      );
-      const labels = Array.from<HTMLElement>(select.querySelectorAll('ion-select-option')).map(
-        (option) => option.textContent.trim(),
-      );
+    it('renders every template enum label from the live response shape', () => {
+      component.onInterestRecalculationChange(true);
+      component.onCompoundingMethodChange(1);
+      fixture.detectChanges();
 
-      expect(labels).toEqual(['Disbursement Date', 'Submitted On Date']);
+      const labels = (testId: string) =>
+        Array.from<HTMLElement>(
+          fixture.nativeElement
+            .querySelector(`[data-testid="${CSS.escape(testId)}"]`)
+            .querySelectorAll('ion-select-option'),
+        ).map((option) => option.textContent.trim());
+
+      expect(labels('loan-product-compounding-method')).toEqual(['None', 'Fee']);
+      expect(labels('loan-product-reschedule-strategy')).toEqual(['Reduce EMI amount']);
+      expect(labels('loan-product-rest-frequency')).toEqual(['Same as repayment period', 'Daily']);
+      expect(labels('loan-product-compounding-frequency')).toEqual([
+        'Same as repayment period',
+        'Daily',
+      ]);
+      expect(labels('loan-product-pre-closure-strategy')).toEqual(['Till pre-close date']);
+      expect(labels('loan-product-repayment-start-date-type')).toEqual([
+        'Disbursement Date',
+        'Submitted On Date',
+      ]);
     });
   });
 

@@ -87,10 +87,12 @@ import { TooltipDirective } from '../../shared/directives/tooltip.directive';
  */
 const DAILY_INTEREST_CALCULATION_PERIOD = 0;
 
-/** The live template response uses `value`; the generated contract currently omits it. */
-type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
-  value?: string;
-};
+/**
+ * Fineract serializes enum options as `{ id, code, value }` (`BaseEnumOptionData`). The generated
+ * loan-product models declare `description` instead, which the server does not send; see #653.
+ * Drop this compatibility type once the models are regenerated from the corrected contract.
+ */
+type TemplateEnumOption<T> = T & { value?: string };
 
 @Component({
   selector: 'app-loan-product-form',
@@ -997,7 +999,7 @@ type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
                       >
                         @for (option of compoundingTypeOptions(); track option.id) {
                           <ion-select-option [value]="option.id">{{
-                            option.description
+                            enumLabel(option)
                           }}</ion-select-option>
                         }
                       </ion-select>
@@ -1024,7 +1026,7 @@ type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
                       >
                         @for (option of rescheduleStrategyOptions(); track option.id) {
                           <ion-select-option [value]="option.id">{{
-                            option.description
+                            enumLabel(option)
                           }}</ion-select-option>
                         }
                       </ion-select>
@@ -1051,7 +1053,7 @@ type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
                       >
                         @for (option of recalculationFrequencyOptions(); track option.id) {
                           <ion-select-option [value]="option.id">{{
-                            option.description
+                            enumLabel(option)
                           }}</ion-select-option>
                         }
                       </ion-select>
@@ -1103,7 +1105,7 @@ type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
                         >
                           @for (option of recalculationFrequencyOptions(); track option.id) {
                             <ion-select-option [value]="option.id">{{
-                              option.description
+                              enumLabel(option)
                             }}</ion-select-option>
                           }
                         </ion-select>
@@ -1157,7 +1159,7 @@ type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
                       >
                         @for (option of preClosureStrategyOptions(); track option.id) {
                           <ion-select-option [value]="option.id">{{
-                            option.description
+                            enumLabel(option)
                           }}</ion-select-option>
                         }
                       </ion-select>
@@ -1221,7 +1223,7 @@ type RepaymentStartDateTypeOption = GetLoanProductsRepaymentStartDateType & {
                     >
                       @for (option of repaymentStartDateTypeOptions(); track option.id) {
                         <ion-select-option [value]="option.id">{{
-                          option.value ?? option.description
+                          enumLabel(option)
                         }}</ion-select-option>
                       }
                     </ion-select>
@@ -1426,17 +1428,21 @@ export class LoanProductFormComponent implements OnInit {
   readonly compoundingMethod = signal<number | undefined>(undefined);
   readonly restFrequencyType = signal<number | undefined>(undefined);
   readonly compoundingFrequencyType = signal<number | undefined>(undefined);
-  readonly compoundingTypeOptions = signal<GetLoanProductsInterestRecalculationCompoundingType[]>(
-    [],
-  );
+  readonly compoundingTypeOptions = signal<
+    TemplateEnumOption<GetLoanProductsInterestRecalculationCompoundingType>[]
+  >([]);
   readonly recalculationFrequencyOptions = signal<
-    GetLoanProductsInterestRecalculationCompoundingFrequencyType[]
+    TemplateEnumOption<GetLoanProductsInterestRecalculationCompoundingFrequencyType>[]
   >([]);
-  readonly rescheduleStrategyOptions = signal<GetLoanProductsRescheduleStrategyType[]>([]);
+  readonly rescheduleStrategyOptions = signal<
+    TemplateEnumOption<GetLoanProductsRescheduleStrategyType>[]
+  >([]);
   readonly preClosureStrategyOptions = signal<
-    GetLoanProductsPreClosureInterestCalculationStrategy[]
+    TemplateEnumOption<GetLoanProductsPreClosureInterestCalculationStrategy>[]
   >([]);
-  readonly repaymentStartDateTypeOptions = signal<RepaymentStartDateTypeOption[]>([]);
+  readonly repaymentStartDateTypeOptions = signal<
+    TemplateEnumOption<GetLoanProductsRepaymentStartDateType>[]
+  >([]);
   readonly chargeOffBehaviourOptions = signal<StringEnumOptionData[]>([]);
 
   /**
@@ -1500,6 +1506,10 @@ export class LoanProductFormComponent implements OnInit {
     value: PostLoanProductsRequest[K],
   ): void {
     this.product.update((product) => ({ ...product, [field]: value }));
+  }
+
+  protected enumLabel(option: { value?: string; description?: string; code?: string }): string {
+    return option.value ?? option.description ?? option.code ?? '';
   }
 
   /** Applies multiple related product fields in one signal notification. */
